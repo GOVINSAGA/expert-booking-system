@@ -1,0 +1,6 @@
+{
+  "name": "Expert Booking System",
+  "description": "Real-time expert session booking system with MongoDB and Socket.io",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
