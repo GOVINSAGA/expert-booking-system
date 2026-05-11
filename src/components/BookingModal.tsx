@@ -7,14 +7,15 @@ interface BookingModalProps {
   expert: Expert;
   date: Date;
   timeSlot: string;
+  clientId: string | null;
   onClose: () => void;
   onSuccess: () => void;
 }
 
-export function BookingModal({ expert, date, timeSlot, onClose, onSuccess }: BookingModalProps) {
+export function BookingModal({ expert, date, timeSlot, clientId, onClose, onSuccess }: BookingModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -35,12 +36,13 @@ export function BookingModal({ expert, date, timeSlot, onClose, onSuccess }: Boo
           expertId: expert._id,
           date: format(date, 'yyyy-MM-dd'),
           timeSlot,
+          clientId,
           ...formData
         })
       });
 
       const data = await res.json();
-      
+
       if (!res.ok) {
         throw new Error(data.error || 'Booking failed');
       }
@@ -55,11 +57,11 @@ export function BookingModal({ expert, date, timeSlot, onClose, onSuccess }: Boo
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
       <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        
+
         {/* Backdrop */}
-        <div 
-          className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity" 
-          aria-hidden="true" 
+        <div
+          className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity"
+          aria-hidden="true"
           onClick={onClose}
         ></div>
 
@@ -68,13 +70,13 @@ export function BookingModal({ expert, date, timeSlot, onClose, onSuccess }: Boo
         {/* Modal Panel */}
         <div className="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-gray-100">
           <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 relative">
-            <button 
+            <button
               onClick={onClose}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-gray-50 rounded-full p-1.5 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
-            
+
             <div className="sm:flex sm:items-start">
               <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
                 <h3 className="text-xl leading-6 font-bold text-gray-900 tracking-tight" id="modal-title">
@@ -106,7 +108,7 @@ export function BookingModal({ expert, date, timeSlot, onClose, onSuccess }: Boo
                       onChange={(e) => setFormData(f => ({ ...f, name: e.target.value }))}
                     />
                   </div>
-                  
+
                   <div>
                     <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1">Email Address</label>
                     <input
@@ -119,7 +121,7 @@ export function BookingModal({ expert, date, timeSlot, onClose, onSuccess }: Boo
                       onChange={(e) => setFormData(f => ({ ...f, email: e.target.value }))}
                     />
                   </div>
-                  
+
                   <div>
                     <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-1">Phone Number</label>
                     <input
@@ -144,7 +146,7 @@ export function BookingModal({ expert, date, timeSlot, onClose, onSuccess }: Boo
                       onChange={(e) => setFormData(f => ({ ...f, notes: e.target.value }))}
                     />
                   </div>
-                  
+
                   <div className="mt-6">
                     <button
                       type="submit"
@@ -152,9 +154,9 @@ export function BookingModal({ expert, date, timeSlot, onClose, onSuccess }: Boo
                       className="w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-70 transition-all font-sans"
                     >
                       {loading ? (
-                       <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4" />
+                        <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4" />
                       ) : (
-                       <CheckCircle className="-ml-1 mr-2 h-4 w-4" />
+                        <CheckCircle className="-ml-1 mr-2 h-4 w-4" />
                       )}
                       {loading ? 'Confirming...' : 'Confirm Booking'}
                     </button>

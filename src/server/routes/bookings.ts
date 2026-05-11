@@ -12,13 +12,14 @@ const bookingSchema = z.object({
   phone: z.string().min(10, 'Valid phone number is required'),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format'),
   timeSlot: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time slot format'),
-  notes: z.string().optional()
+  notes: z.string().optional(),
+  clientId: z.string().optional()
 });
 
 bookingRouter.post('/', async (req, res) => {
   try {
     const data = bookingSchema.parse(req.body);
-    
+
     // Check for existing booking
     const existing = await Booking.findOne({
       expertId: data.expertId,
@@ -39,7 +40,8 @@ bookingRouter.post('/', async (req, res) => {
       io.emit('slot_booked', {
         expertId: data.expertId,
         date: data.date,
-        timeSlot: data.timeSlot
+        timeSlot: data.timeSlot,
+        clientId: data.clientId
       });
     }
 
@@ -73,13 +75,13 @@ bookingRouter.get('/:expertId/slots', async (req, res) => {
   try {
     const { expertId } = req.params;
     const date = req.query.date as string;
-    
+
     if (!date) return res.status(400).json({ error: 'Date is required' });
 
-    const bookings = await Booking.find({ 
-      expertId, 
-      date, 
-      status: { $ne: 'Cancelled' } 
+    const bookings = await Booking.find({
+      expertId,
+      date,
+      status: { $ne: 'Cancelled' }
     }).select('timeSlot');
 
     res.json(bookings.map(b => b.timeSlot));
